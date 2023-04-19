@@ -37,7 +37,7 @@ func parse(exprStr string) (parser.Expr, error) {
 func printExpr(expr parser.Expr, level int) error {
 	switch e := expr.(type) {
 	case *parser.BinaryExpr:
-		printfWithIndent(level, "%v %s\n", color.GreenString("BinaryExpr"), e.String())
+		printfWithIndent(level, "%v %#v %#v\n", color.GreenString("BinaryExpr"), *e, e.VectorMatching)
 		if err := printExpr(e.LHS, level+1); err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func printExpr(expr parser.Expr, level int) error {
 			return err
 		}
 	case *parser.AggregateExpr:
-		printfWithIndent(level, "%v %s\n", color.GreenString("AggregateExpr"), e.String())
+		printfWithIndent(level, "%v %#v\n", color.GreenString("AggregateExpr"), *e)
 		if err := printExpr(e.Expr, level+1); err != nil {
 			return err
 		}
@@ -81,9 +81,10 @@ func printExpr(expr parser.Expr, level int) error {
 	case *parser.StringLiteral:
 		printfWithIndent(level, "%v %s\n", color.GreenString("StringLiteral"), e.String())
 	case *parser.StepInvariantExpr:
+		// MEMO: parser はこの型を生成しない
 		printfWithIndent(level, "%v %s\n", color.GreenString("StepInvariantExpr"), e.String())
 	case *parser.VectorSelector:
-		printfWithIndent(level, "%v %s\n", color.GreenString("VectorSelector"), e.String())
+		printfWithIndent(level, "%v %#v\n", color.GreenString("VectorSelector"), *e)
 	default:
 		return fmt.Errorf("unsupported expr: %s", expr.String())
 	}
